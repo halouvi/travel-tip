@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: lightsalmon;
+    margin: 0 auto;
+    width: 800px;
+}
+
+.map-container {
+    display: flex;
+    background-color: lightseagreen;
+}
+
+.map-container>* {
+    margin: 10px;
+}
+
+.weather {
+    flex-basis: 50%;
+    background-color: rgb(32, 178, 32);
+    margin-bottom: 10px;
+}
+
+.location-table {
+    flex-basis: 50%;
+    background-color: rgb(202, 62, 160);
+}
+
+.weather-table-container {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 30%;
+}
+
+#map {
+    flex-basis: 70%;
+    width: 500px;
+    height: 500px;
+}
