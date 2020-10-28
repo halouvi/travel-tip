@@ -15,6 +15,7 @@ function saveLocation(loc) {
     console.log(loc);
     gLocations.push({
         id: makeId(),
+        name: loc.name,
         lat: loc.lat,
         lng: loc.lng
     })

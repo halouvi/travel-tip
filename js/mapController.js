@@ -3,7 +3,7 @@ import { locationService } from './services/locationService.js'
 
 var gMap;
 var gMarkers = [];
-console.log('Main!');
+// console.log('Main!');
 
 mapService.getLocs()
     .then(locs => console.log('locs', locs))
@@ -14,7 +14,7 @@ window.onload = () => {
 
             addMarker({ lat: 32.0749831, lng: 34.9120554 });
         })
-        // .catch(console.log('INIT MAP ERROR'));
+        .catch(console.log('INIT MAP ERROR'));
 
     getPosition()
         .then(pos => {
@@ -33,12 +33,47 @@ document.querySelector('.btn').addEventListener('click', (ev) => {
 
 document.querySelector('.location-copy').addEventListener('click', () => {
     let pos = {
-            lat: gMarkers[0].getPosition().lat(),
-            lng: gMarkers[0].getPosition().lng()
-        }
-        // console.log(pos);
-    locationService.saveLocation(pos);
+        lat: gMarkers[0].getPosition().lat(),
+        lng: gMarkers[0].getPosition().lng()
+    }
+    getLocationName(pos)
+        .then((name) => {
+            pos.name = name;
+            console.log('pos: ', pos);
+                locationService.saveLocation(pos);
+        });
 })
+
+function getLocationName(location) {
+    // debugger
+    const geocoder = new google.maps.Geocoder();
+    return new Promise(resolve => {
+        geocoder.geocode({ location }, (results, status) => {
+            if (status === "OK") {
+                // console.log(results[0].formatted_address)
+                //         if (results[0]) {
+                //             map.setZoom(11);
+                //             const marker = new google.maps.Marker({
+                //                 position: latlng,
+                //                 map: map,
+                //             });
+                //             infowindow.setContent(results[0].formatted_address);
+                //             infowindow.open(map, marker);
+                //         } else {
+                //             window.alert("No results found");
+                //         }
+                //     } else {
+                //         window.alert("Geocoder failed due to: " + status);
+                //     }
+                // }
+                var locName = results[0].formatted_address;
+                // console.log(locName);
+                // return Promise.resolve(locName)
+                resolve(locName);
+            }
+        })
+    });
+}
 
 
 
@@ -54,9 +89,9 @@ export function initMap(lat = 32.0749831, lng = 34.9120554) {
             console.log('google available');
             gMap = new google.maps.Map(
                 document.querySelector('#map'), {
-                    center: { lat, lng },
-                    zoom: 15
-                })
+                center: { lat, lng },
+                zoom: 15
+            })
             gMap.addListener('click', (mapsMouseEvent) => {
                 var newPos = mapsMouseEvent.latLng.toJSON();
                 deleteMarkers();
@@ -97,7 +132,7 @@ function addMarker(loc) {
         title: 'Hello World!'
     });
     gMarkers.push(newMarker)
-    console.log('addMarker:', google.maps.MapType);
+    // console.log('addMarker:', google.maps.MapType);
     return newMarker
 }
 
