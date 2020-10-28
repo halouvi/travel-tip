@@ -29,10 +29,6 @@ function deleteLocation(id) {
     return Promise.resolve(gLocations)
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 3d3343c423f85f2fbdc021fc8159bdb63caf3b4b
 function makeId(length = 6) {
     var txt = '';
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

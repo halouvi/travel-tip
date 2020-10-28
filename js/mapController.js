@@ -13,7 +13,6 @@ window.onload = () => {
 
     getPosition()
         .then(pos => {
-<<<<<<< HEAD
             console.log('User position is:', pos.coords);
         })
         .catch(err => {
@@ -36,13 +35,6 @@ document.querySelector('.my-location').addEventListener('click', (ev) => {
     }
     getWheather();
 });
-=======
-        })
-        .catch(err => {
-        })
-}
-
->>>>>>> 3d3343c423f85f2fbdc021fc8159bdb63caf3b4b
 
 
 document.querySelector('.location-copy').addEventListener('click', () => {
@@ -55,16 +47,12 @@ document.querySelector('.location-copy').addEventListener('click', () => {
             pos.name = name;
             locationService.saveLocation(pos)
                 .then(locations => renderLocations(locations))
-<<<<<<< HEAD
-                // .then(locations => console.log(locations))
-=======
->>>>>>> 3d3343c423f85f2fbdc021fc8159bdb63caf3b4b
         })
 })
 
 document.querySelector('.go-to').addEventListener('click', () => {
     let searchTerm = document.querySelector('.location-input').value;
-    mapService.getLocationCoord(searchTerm,)
+    mapService.getLocationCoord(searchTerm, )
         .then(result => {
             const latLng = {
                 lat: result[0].geometry.location.lat(),
@@ -146,13 +134,9 @@ function addMarker(loc) {
         map: gMap,
         title: 'Hello World!'
     });
-<<<<<<< HEAD
     gMarkers.push(newMarker);
     getWheather();
     // console.log('addMarker:', google.maps.MapType);
-=======
-    gMarkers.push(newMarker)
->>>>>>> 3d3343c423f85f2fbdc021fc8159bdb63caf3b4b
     return newMarker
 }
 
