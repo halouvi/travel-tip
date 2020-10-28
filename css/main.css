@@ -10,7 +10,7 @@ body {
 
 .map-container {
     display: flex;
-    background-color: lightseagreen;
+    background-color: lightsalmon;
 }
 
 .map-container>* {
@@ -19,13 +19,13 @@ body {
 
 .weather {
     flex-basis: 50%;
-    background-color: rgb(32, 178, 32);
+    background-color: rgb(204, 233, 204);
     margin-bottom: 10px;
 }
 
 .location-table {
     flex-basis: 50%;
-    background-color: rgb(202, 62, 160);
+    background-color: rgb(170, 214, 231);
     /* display: grid; */
     /* grid-template-columns: 60%, 20%, 20%; */
 }
@@ -41,6 +41,7 @@ body {
     width: 500px;
     height: 500px;
 }
+
 
 /* .location-table span {
     grid-column: span 1;

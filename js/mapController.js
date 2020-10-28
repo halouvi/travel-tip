@@ -17,19 +17,28 @@ window.onload = () => {
 
     getPosition()
         .then(pos => {
-
-            // console.log('User position is:', pos.coords);
+            console.log('User position is:', pos.coords);
         })
         .catch(err => {
-            // console.log('err!!!', err);
+            console.log('err!!!', err);
         })
 }
 
-// document.querySelector('.btn').addEventListener('click', (ev) => {
-// console.log('Aha!', ev.target);
-// panTo(35.6895, 139.6917);
-// })
-
+//return user back to
+document.querySelector('.my-location').addEventListener('click', (ev) => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                panTo(pos);
+                addMarker(pos);
+            });
+    }
+    getWheather();
+});
 
 
 document.querySelector('.location-copy').addEventListener('click', () => {
@@ -42,7 +51,7 @@ document.querySelector('.location-copy').addEventListener('click', () => {
             pos.name = name;
             locationService.saveLocation(pos)
                 .then(locations => renderLocations(locations))
-            // .then(locations => console.log(locations))
+                // .then(locations => console.log(locations))
         })
 })
 
@@ -81,9 +90,9 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
             console.log('google available');
             gMap = new google.maps.Map(
                 document.querySelector('#map'), {
-                center: { lat, lng },
-                zoom: 15
-            })
+                    center: { lat, lng },
+                    zoom: 15
+                })
             gMap.addListener('click', (mapsMouseEvent) => {
                 var newPos = mapsMouseEvent.latLng.toJSON();
                 deleteMarkers();
@@ -118,7 +127,8 @@ function addMarker(loc) {
         map: gMap,
         title: 'Hello World!'
     });
-    gMarkers.push(newMarker)
+    gMarkers.push(newMarker);
+    getWheather();
     // console.log('addMarker:', google.maps.MapType);
     return newMarker
 }
@@ -139,7 +149,7 @@ function getPosition() {
 
 function _connectGoogleApi() {
     if (window.google) return Promise.resolve()
-    const API_KEY = 'AIzaSyC1IyV2W9PZTl0fv2-1SUzT6Kz6X9LC1do'; //TODO: Enter your API Key
+    const API_KEY = 'AIzaSyC1IyV2W9PZTl0fv2-1SUzT6Kz6X9LC1do'; //you can enter your API Key
     var elGoogleApi = document.createElement('script');
     elGoogleApi.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}`;
     elGoogleApi.async = true;
@@ -153,23 +163,17 @@ function _connectGoogleApi() {
 
 function _connectWheatherApi(lat = 32.0749831, lon = 34.9120554) {
     const API_key = 'd5b56bcdb355950cf8bbe7c58955ddf8';
-    // return axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=32.0749831&lon=34.9120554&appid=d5b56bcdb355950cf8bbe7c58955ddf8`)
     return axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}`)
         .then(res => res);
 }
-getWheather()
 
 
 /**return nname_country, weahter and humidity for lat&long**/
 function getWheather() {
-    // console.log(locationService.getLocationByLat)
-    let lat = 32.0749831;
-    let lon = 34.9120554;
-    // let lat = 32.0749831;
-    // let lon = 28.9120554;
-    _connectWheatherApi(lat, lon)
+    let lat = gMarkers[0].getPosition().lat();
+    let lng = gMarkers[0].getPosition().lng();
+    _connectWheatherApi(lat, lng)
         .then(ans => {
-            // console.log('ans.weahter.description:', typeof ans.data.weather)
             let weahter = ans.data.weather[0].description;
             let humidity = ans.data.main.humidity;
             let country = ans.data.sys.country;
@@ -181,5 +185,5 @@ function getWheather() {
 }
 
 function renderWheather(weahter, humidity, country) {
-    document.querySelector('.weather').innerHTML = `<h2> ${country} </h2> <h3>${weahter}</h3> <h3>humidity:${humidity}%</h3>`;
+    document.querySelector('.weather').innerHTML = `<h2>Weather today: ${country} </h2> <h3>${weahter}</h3> <h3>humidity:${humidity}%</h3>`;
 }

@@ -33,16 +33,6 @@ function deleteLocation(id) {
     return Promise.resolve(gLocations)
 }
 
-function getLocationByLat() {
-    // console.log(gLocations.lat)
-    return gLocations.lat;
-}
-
-function getLocationByLng() {
-    return gLocations.lng;
-}
-
-
 
 function makeId(length = 6) {
     var txt = '';
