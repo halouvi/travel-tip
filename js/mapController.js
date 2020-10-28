@@ -4,6 +4,9 @@ import { locationService } from './services/locationService.js'
 var gMap;
 var gMarkers = [];
 
+mapService.getLocs()
+    .then(locs => console.log('locs', locs))
+
 window.onload = () => {
     initMap()
         .then(() => {
