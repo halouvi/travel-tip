@@ -7,11 +7,7 @@ export const locationService = {
 }
 
 var gLocations = [];
-// { id, name, lat, lng, weather, createdAt, updatedAt }
 
-// function createLoc({ id, name, lat, lng, weather, createdAt, updatedAt }) {
-
-// }
 function saveLocation(loc) {
     gLocations.push({
         id: makeId(),
@@ -32,17 +28,6 @@ function deleteLocation(id) {
     gLocations.splice(locIdx, 1)
     return Promise.resolve(gLocations)
 }
-
-function getLocationByLat() {
-    // console.log(gLocations.lat)
-    return gLocations.lat;
-}
-
-function getLocationByLng() {
-    return gLocations.lng;
-}
-
-
 
 function makeId(length = 6) {
     var txt = '';
