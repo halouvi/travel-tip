@@ -4,7 +4,6 @@ import { locationService } from './services/locationService.js'
 var gMap;
 var gMarkers = [];
 // console.log('Main!');
-
 mapService.getLocs()
     .then(locs => console.log('locs', locs))
 
@@ -31,6 +30,14 @@ document.querySelector('.btn').addEventListener('click', (ev) => {
     panTo(35.6895, 139.6917);
 })
 
+
+// returns me back in place
+document.querySelector('.my-location').addEventListener('click', (ev) => {
+    // console.log('Aha!', ev.target);
+    return
+    // panTo(35.6895, 139.6917);
+})
+
 document.querySelector('.location-copy').addEventListener('click', () => {
     let pos = {
         lat: gMarkers[0].getPosition().lat(),
@@ -40,7 +47,7 @@ document.querySelector('.location-copy').addEventListener('click', () => {
         .then((name) => {
             pos.name = name;
             console.log('pos: ', pos);
-                locationService.saveLocation(pos);
+            locationService.saveLocation(pos);
         });
 })
 
@@ -84,9 +91,9 @@ export function initMap(lat = 32.0749831, lng = 34.9120554) {
             console.log('google available');
             gMap = new google.maps.Map(
                 document.querySelector('#map'), {
-                center: { lat, lng },
-                zoom: 15
-            })
+                    center: { lat, lng },
+                    zoom: 15
+                })
             gMap.addListener('click', (mapsMouseEvent) => {
                 var newPos = mapsMouseEvent.latLng.toJSON();
                 deleteMarkers();
@@ -127,7 +134,7 @@ function addMarker(loc) {
         title: 'Hello World!'
     });
     gMarkers.push(newMarker)
-    // console.log('addMarker:', google.maps.MapType);
+        // console.log('addMarker:', google.maps.MapType);
     return newMarker
 }
 
@@ -157,4 +164,66 @@ function _connectGoogleApi() {
         elGoogleApi.onload = resolve;
         elGoogleApi.onerror = () => reject('Google script failed to load')
     })
+}
+
+
+function _connectWheatherApi(lat = 32.0749831, lon = 34.9120554) {
+    const API_key = 'd5b56bcdb355950cf8bbe7c58955ddf8';
+    // return axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=32.0749831&lon=34.9120554&appid=d5b56bcdb355950cf8bbe7c58955ddf8`)
+    return axios.get(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_key}`)
+        .then(res => res);
+}
+getWheather()
+
+
+/**return nname_country, weahter and humidity for lat&long**/
+function getWheather() {
+    // console.log(locationService.getLocationByLat)
+    let lat = 32.0749831;
+    let lon = 34.9120554;
+    // let lat = 32.0749831;
+    // let lon = 28.9120554;
+    _connectWheatherApi(lat, lon)
+        .then(ans => {
+            // console.log('ans.weahter.description:', typeof ans.data.weather)
+            let weahter = ans.data.weather[0].description;
+            let humidity = ans.data.main.humidity;
+            let country = ans.data.sys.country;
+            renderWheather(weahter, humidity, country);
+        })
+        .catch(err => {
+            console.log('Error:', err)
+        })
+}
+
+function renderWheather(weahter, humidity, country) {
+    document.querySelector('.weather').innerHTML = `<h2> ${country} </h2> <h3>${weahter}</h3> <h3>humidity:${humidity}%</h3>`;
+}
+
+
+
+
+
+
+
+
+//
+const geocoder = new google.maps.Geocoder();
+document.querySelector(".go-to").addEventListener("click", () => {
+    geocodeAddress(geocoder, gMap);
+});
+
+function geocodeAddress(geocoder, resultsMap) {
+    const address = document.querySelector(".location-input").value;
+    return new Promise(geocoder.geocode({ address: address }, (results, status) => {
+        if (status === "OK") {
+            resultsMap.setCenter(results[0].geometry.location);
+            new google.maps.Marker({
+                map: resultsMap,
+                position: results[0].geometry.location,
+            });
+        } else {
+            alert("Geocode was not successful for the following reason: " + status);
+        }
+    }));
 }

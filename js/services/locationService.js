@@ -2,6 +2,8 @@
 
 export const locationService = {
     saveLocation,
+    getLocationByLng,
+    getLocationByLat,
     gLocations
 }
 
@@ -21,6 +23,16 @@ function saveLocation(loc) {
     })
     console.log(gLocations)
 }
+
+function getLocationByLat() {
+    // console.log(gLocations.lat)
+    return gLocations.lat;
+}
+
+function getLocationByLng() {
+    return gLocations.lng;
+}
+
 
 
 function makeId(length = 6) {
