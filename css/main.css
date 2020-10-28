@@ -26,6 +26,8 @@ body {
 .location-table {
     flex-basis: 50%;
     background-color: rgb(202, 62, 160);
+    /* display: grid; */
+    /* grid-template-columns: 60%, 20%, 20%; */
 }
 
 .weather-table-container {
@@ -39,3 +41,11 @@ body {
     width: 500px;
     height: 500px;
 }
+
+/* .location-table span {
+    grid-column: span 1;
+}
+
+.location-table button {
+    grid-column: span 1;
+} */

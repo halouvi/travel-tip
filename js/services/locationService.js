@@ -2,7 +2,8 @@
 
 export const locationService = {
     saveLocation,
-    gLocations
+    findLocByID,
+    deleteLocation
 }
 
 var gLocations = [];
@@ -12,14 +13,24 @@ var gLocations = [];
 
 // }
 function saveLocation(loc) {
-    console.log(loc);
     gLocations.push({
         id: makeId(),
         name: loc.name,
         lat: loc.lat,
         lng: loc.lng
     })
-    console.log(gLocations)
+    return Promise.resolve(gLocations)
+}
+
+function findLocByID(id) {
+    var locIdx = gLocations.findIndex(loc => loc.id === id);
+    return Promise.resolve(gLocations[locIdx])
+}
+
+function deleteLocation(id) {
+    var locIdx = gLocations.findIndex(loc => loc.id === id);
+    gLocations.splice(locIdx, 1)
+    return Promise.resolve(gLocations)
 }
 
 
