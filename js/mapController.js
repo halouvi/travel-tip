@@ -3,7 +3,7 @@ import { locationService } from './services/locationService.js'
 
 var gMap;
 var gMarkers = [];
-// console.log('Main!');
+
 mapService.getLocs()
     .then(locs => console.log('locs', locs))
 
@@ -25,75 +25,65 @@ window.onload = () => {
         })
 }
 
-document.querySelector('.btn').addEventListener('click', (ev) => {
-    // console.log('Aha!', ev.target);
-    panTo(35.6895, 139.6917);
-})
+// document.querySelector('.btn').addEventListener('click', (ev) => {
+// console.log('Aha!', ev.target);
+// panTo(35.6895, 139.6917);
+// })
 
 
-// returns me back in place
-document.querySelector('.my-location').addEventListener('click', (ev) => {
-    // console.log('Aha!', ev.target);
-    return
-    // panTo(35.6895, 139.6917);
-})
 
 document.querySelector('.location-copy').addEventListener('click', () => {
     let pos = {
         lat: gMarkers[0].getPosition().lat(),
         lng: gMarkers[0].getPosition().lng()
     }
-    getLocationName(pos)
+    mapService.getLocationName(pos)
         .then((name) => {
             pos.name = name;
-            console.log('pos: ', pos);
-            locationService.saveLocation(pos);
-        });
+            locationService.saveLocation(pos)
+                .then(locations => renderLocations(locations))
+            // .then(locations => console.log(locations))
+        })
 })
 
-function getLocationName(location) {
-    // debugger
-    const geocoder = new google.maps.Geocoder();
-    return new Promise(resolve => {
-        geocoder.geocode({ location }, (results, status) => {
-            if (status === "OK") {
-                // console.log(results[0].formatted_address)
-                //         if (results[0]) {
-                //             map.setZoom(11);
-                //             const marker = new google.maps.Marker({
-                //                 position: latlng,
-                //                 map: map,
-                //             });
-                //             infowindow.setContent(results[0].formatted_address);
-                //             infowindow.open(map, marker);
-                //         } else {
-                //             window.alert("No results found");
-                //         }
-                //     } else {
-                //         window.alert("Geocoder failed due to: " + status);
-                //     }
-                // }
-                var locName = results[0].formatted_address;
-                // console.log(locName);
-                // return Promise.resolve(locName)
-                resolve(locName);
-            }
+document.querySelector('.delete-btn').addEventListener('click', (ev) => {
+    locationService.deleteLocation(ev.target.dataset.id)
+})
+
+
+
+function renderLocations(locations) {
+    document.querySelector('.location-table').innerHTML = '';
+    let strHTMLs = locations.map(loc =>
+        `<span>${loc.name}</span>
+         <button class="go-btn" data-id="${loc.id}">Go</button>
+         <button class="delete-btn" data-id="${loc.id}">Delete</button>`
+    );
+    document.querySelector('.location-table').innerHTML = strHTMLs.join('');
+    document.querySelectorAll('.go-btn').forEach(btn => {
+        btn.addEventListener('click', (ev) => {
+            locationService.findLocByID(ev.target.dataset.id)
+                .then((location) => panTo(location))
         })
-    });
+    })
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (ev) => {
+            locationService.deleteLocation(ev.target.dataset.id)
+                .then(locations => renderLocations(locations))
+        })
+    })
 }
 
-
-
-export function initMap(lat = 32.0749831, lng = 34.9120554) {
+function initMap(lat = 32.0749831, lng = 34.9120554) {
     console.log('InitMap');
     return _connectGoogleApi()
         .then(() => {
             console.log('google available');
             gMap = new google.maps.Map(
                 document.querySelector('#map'), {
-                    center: { lat, lng },
-                    zoom: 15
-                })
+                center: { lat, lng },
+                zoom: 15
+            })
             gMap.addListener('click', (mapsMouseEvent) => {
                 var newPos = mapsMouseEvent.latLng.toJSON();
                 deleteMarkers();
@@ -102,25 +92,20 @@ export function initMap(lat = 32.0749831, lng = 34.9120554) {
             console.log('Map!', gMap);
         })
 }
-
-
 // Sets the map on all markers in the array.
 function setMapOnAll(map) {
     for (let i = 0; i < gMarkers.length; i++) {
         gMarkers[i].setMap(map);
     }
 }
-
 // Removes the markers from the map, but keeps them in the array.
 function clearMarkers() {
     setMapOnAll(null);
 }
-
 // Shows any markers currently in the array.
 function showMarkers() {
     setMapOnAll(map);
 }
-
 // Deletes all markers in the array by removing references to them.
 function deleteMarkers() {
     clearMarkers();
@@ -134,12 +119,12 @@ function addMarker(loc) {
         title: 'Hello World!'
     });
     gMarkers.push(newMarker)
-        // console.log('addMarker:', google.maps.MapType);
+    // console.log('addMarker:', google.maps.MapType);
     return newMarker
 }
 
-function panTo(lat, lng) {
-    var laLatLng = new google.maps.LatLng(lat, lng);
+function panTo(loc) {
+    var laLatLng = new google.maps.LatLng(loc.lat, loc.lng);
     gMap.panTo(laLatLng);
 }
 
@@ -165,7 +150,6 @@ function _connectGoogleApi() {
         elGoogleApi.onerror = () => reject('Google script failed to load')
     })
 }
-
 
 function _connectWheatherApi(lat = 32.0749831, lon = 34.9120554) {
     const API_key = 'd5b56bcdb355950cf8bbe7c58955ddf8';
@@ -199,31 +183,3 @@ function getWheather() {
 function renderWheather(weahter, humidity, country) {
     document.querySelector('.weather').innerHTML = `<h2> ${country} </h2> <h3>${weahter}</h3> <h3>humidity:${humidity}%</h3>`;
 }
-
-
-
-
-
-
-
-
-//google locatin by name api
-// const geocoder = new google.maps.Geocoder();
-// document.querySelector(".go-to").addEventListener("click", () => {
-//     geocodeAddress(geocoder, gMap);
-// });
-
-// function geocodeAddress(geocoder, resultsMap) {
-//     const address = document.querySelector(".location-input").value;
-//     return new Promise(geocoder.geocode({ address: address }, (results, status) => {
-//         if (status === "OK") {
-//             resultsMap.setCenter(results[0].geometry.location);
-//             new google.maps.Marker({
-//                 map: resultsMap,
-//                 position: results[0].geometry.location,
-//             });
-//         } else {
-//             alert("Geocode was not successful for the following reason: " + status);
-//         }
-//     }));
-// }
