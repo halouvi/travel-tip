@@ -1,16 +1,20 @@
 export const mapService = {
     getLocs,
-    getLocationName
+    getLocationName,
+    getLocationCoord
 }
 
-var locs = [{ lat: 11.22, lng: 22.11 }]
-
-function getLocs() {
+function getLocationCoord(address) {
+    const geocoder = new google.maps.Geocoder();
     return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(locs);
-        }, 2000)
-    });
+        geocoder.geocode({ address }, (results, status) => {
+            if (status === "OK") {
+                resolve(results)
+            } else {
+                reject('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    })
 }
 
 function getLocationName(location) {
@@ -18,25 +22,7 @@ function getLocationName(location) {
     return new Promise(resolve => {
         geocoder.geocode({ location }, (results, status) => {
             if (status === "OK") {
-                // console.log(results[0].formatted_address)
-                //         if (results[0]) {
-                //             map.setZoom(11);
-                //             const marker = new google.maps.Marker({
-                //                 position: latlng,
-                //                 map: map,
-                //             });
-                //             infowindow.setContent(results[0].formatted_address);
-                //             infowindow.open(map, marker);
-                //         } else {
-                //             window.alert("No results found");
-                //         }
-                //     } else {
-                //         window.alert("Geocoder failed due to: " + status);
-                //     }
-                // }
                 var locName = results[0].formatted_address;
-                // console.log(locName);
-                // return Promise.resolve(locName)
                 resolve(locName);
             }
         })

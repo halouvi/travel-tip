@@ -4,19 +4,16 @@ import { locationService } from './services/locationService.js'
 var gMap;
 var gMarkers = [];
 
-mapService.getLocs()
-    .then(locs => console.log('locs', locs))
-
 window.onload = () => {
     initMap()
         .then(() => {
-
             addMarker({ lat: 32.0749831, lng: 34.9120554 });
         })
         .catch(console.log('INIT MAP ERROR'));
 
     getPosition()
         .then(pos => {
+<<<<<<< HEAD
             console.log('User position is:', pos.coords);
         })
         .catch(err => {
@@ -39,6 +36,13 @@ document.querySelector('.my-location').addEventListener('click', (ev) => {
     }
     getWheather();
 });
+=======
+        })
+        .catch(err => {
+        })
+}
+
+>>>>>>> 3d3343c423f85f2fbdc021fc8159bdb63caf3b4b
 
 
 document.querySelector('.location-copy').addEventListener('click', () => {
@@ -51,14 +55,32 @@ document.querySelector('.location-copy').addEventListener('click', () => {
             pos.name = name;
             locationService.saveLocation(pos)
                 .then(locations => renderLocations(locations))
+<<<<<<< HEAD
                 // .then(locations => console.log(locations))
+=======
+>>>>>>> 3d3343c423f85f2fbdc021fc8159bdb63caf3b4b
         })
 })
 
-document.querySelector('.delete-btn').addEventListener('click', (ev) => {
-    locationService.deleteLocation(ev.target.dataset.id)
+document.querySelector('.go-to').addEventListener('click', () => {
+    let searchTerm = document.querySelector('.location-input').value;
+    mapService.getLocationCoord(searchTerm,)
+        .then(result => {
+            const latLng = {
+                lat: result[0].geometry.location.lat(),
+                lng: result[0].geometry.location.lng()
+            }
+            addMarker(latLng)
+            panTo(latLng);
+            mapService.getLocationName(latLng)
+                .then((name) => {
+                    latLng.name = name;
+                    locationService.saveLocation(latLng)
+                        .then(locations => renderLocations(locations))
+                })
+        })
+        .catch(error => console.error(error))
 })
-
 
 
 function renderLocations(locations) {
@@ -84,10 +106,8 @@ function renderLocations(locations) {
 }
 
 function initMap(lat = 32.0749831, lng = 34.9120554) {
-    console.log('InitMap');
     return _connectGoogleApi()
         .then(() => {
-            console.log('google available');
             gMap = new google.maps.Map(
                 document.querySelector('#map'), {
                     center: { lat, lng },
@@ -98,7 +118,6 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
                 deleteMarkers();
                 addMarker(newPos);
             })
-            console.log('Map!', gMap);
         })
 }
 // Sets the map on all markers in the array.
@@ -127,9 +146,13 @@ function addMarker(loc) {
         map: gMap,
         title: 'Hello World!'
     });
+<<<<<<< HEAD
     gMarkers.push(newMarker);
     getWheather();
     // console.log('addMarker:', google.maps.MapType);
+=======
+    gMarkers.push(newMarker)
+>>>>>>> 3d3343c423f85f2fbdc021fc8159bdb63caf3b4b
     return newMarker
 }
 
@@ -139,8 +162,6 @@ function panTo(loc) {
 }
 
 function getPosition() {
-    console.log('Getting Pos');
-
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject)
     })
